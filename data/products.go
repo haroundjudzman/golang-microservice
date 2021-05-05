@@ -16,7 +16,7 @@ type Product struct {
 }
 
 var productList = []*Product{
-	&Product{
+	{
 		ID:        1,
 		Name:      "New Bacon-ings Burger",
 		Season:    1,
@@ -25,7 +25,7 @@ var productList = []*Product{
 		CreatedOn: time.Now().UTC().String(),
 		UpdatedOn: time.Now().UTC().String(),
 	},
-	&Product{
+	{
 		ID:        2,
 		Name:      "Egger Can't Be Cheesers Burger",
 		Season:    3,
