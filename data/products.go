@@ -5,14 +5,14 @@ import "time"
 // Product defines structure for API data
 // The products are burgers from Bob's Burgers
 type Product struct {
-	ID        int
-	Name      string
-	Season    int
-	Episode   int
-	Price     float32
-	CreatedOn string
-	UpdatedOn string
-	DeletedOn string
+	ID        int     `json:"id"`
+	Name      string  `json:"name"`
+	Season    int     `json:"season"`
+	Episode   int     `json:"episode"`
+	Price     float32 `json:"price"`
+	CreatedOn string  `json:"-"`
+	UpdatedOn string  `json:"-"`
+	DeletedOn string  `json:"-"`
 }
 
 func GetProducts() []*Product {
