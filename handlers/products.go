@@ -45,5 +45,5 @@ func (p *Products) addProducts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to unmarshal json", http.StatusBadRequest)
 	}
 
-	p.l.Printf("Prod: %#v", product)
+	data.AddProduct(product)
 }
