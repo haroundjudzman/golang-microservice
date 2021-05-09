@@ -9,6 +9,7 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
+// Products is http.Handler
 type Products struct {
 	l *log.Logger
 }
@@ -17,6 +18,7 @@ func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
 }
 
+// ServeHTTP is used such that Products satisfies the http.Handler interface
 func (p *Products) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		p.getProducts(w, r)
@@ -24,7 +26,7 @@ func (p *Products) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		p.addProducts(w, r)
+		p.addProduct(w, r)
 		return
 	}
 
@@ -51,15 +53,18 @@ func (p *Products) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		p.updateProducts(id, w, r)
-
+		p.updateProduct(id, w, r)
+		return
 	}
 
 	// catch all
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
 
+// getProducts return all products from data store
 func (p *Products) getProducts(w http.ResponseWriter, r *http.Request) {
+	p.l.Println("Handling GET method")
+
 	productList := data.GetProducts()
 	err := productList.ToJSON(w)
 	if err != nil {
@@ -67,7 +72,10 @@ func (p *Products) getProducts(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *Products) addProducts(w http.ResponseWriter, r *http.Request) {
+// addProduct adds a product to data store
+func (p *Products) addProduct(w http.ResponseWriter, r *http.Request) {
+	p.l.Println("Handling POST method")
+
 	product := &data.Product{}
 	err := product.FromJSON(r.Body)
 	if err != nil {
@@ -77,7 +85,10 @@ func (p *Products) addProducts(w http.ResponseWriter, r *http.Request) {
 	data.AddProduct(product)
 }
 
-func (p *Products) updateProducts(id int, w http.ResponseWriter, r *http.Request) {
+// updateProduct updates the product with given ID
+func (p *Products) updateProduct(id int, w http.ResponseWriter, r *http.Request) {
+	p.l.Println("Handling PUT method")
+
 	product := &data.Product{}
 	err := product.FromJSON(r.Body)
 	if err != nil {
