@@ -18,6 +18,7 @@ func main() {
 
 	productHandler := handlers.NewProducts(logger)
 
+	// Create serve mux and register handler
 	serveMux := http.NewServeMux()
 	serveMux.Handle("/", productHandler)
 
@@ -39,6 +40,8 @@ func main() {
 		}
 	}()
 
+	// Set up trap for interrupt and sigterm signal
+	// Use this mechanism to gracefully shutdown
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 

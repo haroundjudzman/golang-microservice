@@ -20,27 +20,34 @@ type Product struct {
 	DeletedOn string  `json:"-"`
 }
 
+// FromJSON decodes JSON body into given reader
 func (p *Product) FromJSON(r io.Reader) error {
 	decoder := json.NewDecoder(r)
 	return decoder.Decode(p)
 }
 
+// Products is collection of Product
 type Products []*Product
 
+// ToJSON encodes JSON body into given writer
 func (p *Products) ToJSON(w io.Writer) error {
 	encoder := json.NewEncoder(w)
 	return encoder.Encode(p)
 }
 
+// GetProducts returns collection of Product
 func GetProducts() Products {
 	return productList
 }
 
+// AddProduct appends new product with incremented ID
 func AddProduct(p *Product) {
 	p.ID = getNextID()
 	productList = append(productList, p)
 }
 
+// UpdateProduct updates existing product with a given ID
+// It returns an error if product is not found
 func UpdateProduct(id int, p *Product) error {
 	_, index, err := findProduct(id)
 	if err != nil {
