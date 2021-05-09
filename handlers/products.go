@@ -3,6 +3,8 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"regexp"
+	"strconv"
 
 	"github.com/haroundjudzman/golang-microservice/data"
 )
@@ -26,6 +28,33 @@ func (p *Products) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Method == http.MethodPut {
+		// get the id in the URI
+		path := r.URL.Path
+		regex := regexp.MustCompile(`/([0-9]+)`)
+		matchGroup := regex.FindAllStringSubmatch(path, -1)
+
+		if len(matchGroup) != 1 {
+			http.Error(w, "Invalid URI", http.StatusBadRequest)
+			return
+		}
+
+		if len(matchGroup[0]) != 2 {
+			http.Error(w, "Invalid URI", http.StatusBadRequest)
+			return
+		}
+
+		idString := matchGroup[0][1]
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			http.Error(w, "Invalid URI", http.StatusBadRequest)
+			return
+		}
+
+		p.updateProducts(id, w, r)
+
+	}
+
 	// catch all
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
@@ -46,4 +75,23 @@ func (p *Products) addProducts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.AddProduct(product)
+}
+
+func (p *Products) updateProducts(id int, w http.ResponseWriter, r *http.Request) {
+	product := &data.Product{}
+	err := product.FromJSON(r.Body)
+	if err != nil {
+		http.Error(w, "Unable to unmarshal json", http.StatusBadRequest)
+	}
+
+	err = data.UpdateProduct(id, product)
+	if err == data.ErrProductNotFound {
+		http.Error(w, "Product not found", http.StatusNotFound)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, "Product not found", http.StatusInternalServerError)
+		return
+	}
 }
