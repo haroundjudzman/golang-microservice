@@ -1,9 +1,7 @@
 package data
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"time"
 
 	"github.com/go-playground/validator"
@@ -23,12 +21,6 @@ type Product struct {
 	CreatedOn string  `json:"-"`
 	UpdatedOn string  `json:"-"`
 	DeletedOn string  `json:"-"`
-}
-
-// FromJSON decodes JSON body into given reader
-func (p *Product) FromJSON(r io.Reader) error {
-	decoder := json.NewDecoder(r)
-	return decoder.Decode(p)
 }
 
 func (p *Product) Validate() error {

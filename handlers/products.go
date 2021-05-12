@@ -20,16 +20,6 @@ func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
 }
 
-// addProduct adds a product to data store
-func (p *Products) AddProduct(w http.ResponseWriter, r *http.Request) {
-	p.l.Println("Handling POST method")
-
-	// Retrieve product from context
-	product := r.Context().Value(KeyProduct{}).(data.Product)
-
-	data.AddProduct(&product)
-}
-
 // updateProduct updates the product with given ID
 func (p *Products) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	p.l.Println("Handling PUT method")
@@ -56,21 +46,25 @@ func (p *Products) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// KeyProduct is a key used for Product object in the context.
 type KeyProduct struct {
 }
 
-func (p *Products) MiddlewareProductValidation(next http.Handler) http.Handler {
+// MiddlewareProductValidate validates the product in request and calls next handler.
+func (p *Products) MiddlewareProductValidate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		product := data.Product{}
+		prod := &data.Product{}
 
-		err := product.FromJSON(r.Body)
+		err := data.FromJSON(prod, r.Body)
 		if err != nil {
-			http.Error(w, "Unable to unmarshal json", http.StatusBadRequest)
+			p.l.Println("[ERROR] serialising product", err)
+
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		// Validate product
-		err = product.Validate()
+		err = prod.Validate()
 		if err != nil {
 			p.l.Println("[ERROR] validating product", err)
 			http.Error(
@@ -81,7 +75,7 @@ func (p *Products) MiddlewareProductValidation(next http.Handler) http.Handler {
 			return
 		}
 		// Add product to the context
-		ctx := context.WithValue(r.Context(), KeyProduct{}, product)
+		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
 		r = r.WithContext(ctx)
 
 		// Call the next handler
