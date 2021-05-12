@@ -14,8 +14,36 @@ func (p *Products) ListAll(w http.ResponseWriter, r *http.Request) {
 	prodList := data.GetProducts()
 
 	// Serialise to JSON
-	err := prodList.ToJSON(w)
+	err := data.ToJSON(prodList, w)
 	if err != nil {
-		http.Error(w, "Unable to marshal json", http.StatusInternalServerError)
+		p.l.Println("[ERROR] serialising product", err)
+	}
+}
+
+// ListSingle returns one product from given id param
+func (p *Products) ListSingle(w http.ResponseWriter, r *http.Request) {
+	// Get id from URL
+	id := getProductID(r)
+
+	p.l.Println("[DEBUG] Get product ID", id)
+
+	prod, err := data.GetProductByID(id)
+
+	switch err {
+	case nil:
+
+	case data.ErrProductNotFound:
+		p.l.Println("[ERROR] No matching product", err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	default:
+		p.l.Println("[ERROR] No matching product", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = data.ToJSON(prod, w)
+	if err != nil {
+		p.l.Println("[ERROR] serialising product", err)
 	}
 }

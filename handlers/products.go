@@ -88,3 +88,19 @@ func (p *Products) MiddlewareProductValidation(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+// getProductID returns product ID from URL.
+// It should never fail because router ensures
+// that path will produce valid number.
+// Panic in the extreme case it fails.
+func getProductID(r *http.Request) int {
+
+	// Parse id from request param
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		panic(err)
+	}
+
+	return id
+}
