@@ -20,17 +20,6 @@ func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
 }
 
-// getProducts return all products from data store
-func (p *Products) GetProducts(w http.ResponseWriter, r *http.Request) {
-	p.l.Println("Handling GET method")
-
-	productList := data.GetProducts()
-	err := productList.ToJSON(w)
-	if err != nil {
-		http.Error(w, "Unable to marshal json", http.StatusInternalServerError)
-	}
-}
-
 // addProduct adds a product to data store
 func (p *Products) AddProduct(w http.ResponseWriter, r *http.Request) {
 	p.l.Println("Handling POST method")

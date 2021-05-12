@@ -24,7 +24,7 @@ func main() {
 
 	// Divide each methods into its own subrouter
 	getRouter := r.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/", productHandler.GetProducts)
+	getRouter.HandleFunc("/products", productHandler.ListAll)
 
 	putRouter := r.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/{id:[0-9]+}", productHandler.UpdateProduct)
