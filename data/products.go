@@ -53,30 +53,21 @@ func AddProduct(p *Product) {
 	productList = append(productList, p)
 }
 
-// UpdateProduct updates existing product with a given ID
-// It returns an error if product is not found
-func UpdateProduct(id int, p *Product) error {
-	_, index, err := findProduct(id)
-	if err != nil {
-		return err
+// UpdateProduct updates existing product with a given ID.
+// It returns an error if product is not found.
+func UpdateProduct(p *Product) error {
+	i := findIndexByProductID(p.ID)
+	if i == -1 {
+		return ErrProductNotFound
 	}
 
-	p.ID = id
-	productList[index] = p
+	productList[i] = p
 
 	return nil
 }
 
-func findProduct(id int) (*Product, int, error) {
-	for i, p := range productList {
-		if p.ID == id {
-			return p, i, nil
-		}
-	}
-
-	return nil, -1, ErrProductNotFound
-}
-
+// findIndexByProductID finds the index of product
+// in the database. Returns -1 when no match is found.
 func findIndexByProductID(id int) int {
 	for i, p := range productList {
 		if p.ID == id {
