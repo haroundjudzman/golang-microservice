@@ -17,26 +17,26 @@ func main() {
 
 	logger := log.New(os.Stdout, "golang-microservice ", log.LstdFlags)
 
-	productHandler := handlers.NewProducts(logger)
+	burgerHandler := handlers.NewBurgers(logger)
 
 	// Create a router
 	r := mux.NewRouter()
 
 	// Divide each methods into its own subrouter
 	getRouter := r.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/products", productHandler.ListAll)
-	getRouter.HandleFunc("/products/{id:[0-9]+}", productHandler.ListSingle)
+	getRouter.HandleFunc("/burgers", burgerHandler.ListAll)
+	getRouter.HandleFunc("/burgers/{id:[0-9]+}", burgerHandler.ListSingle)
 
 	putRouter := r.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/products", productHandler.Update)
-	putRouter.Use(productHandler.MiddlewareProductValidate)
+	putRouter.HandleFunc("/burgers", burgerHandler.Update)
+	putRouter.Use(burgerHandler.MiddlewareBurgerValidate)
 
 	postRouter := r.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/products", productHandler.Create)
-	postRouter.Use(productHandler.MiddlewareProductValidate)
+	postRouter.HandleFunc("/burgers", burgerHandler.Create)
+	postRouter.Use(burgerHandler.MiddlewareBurgerValidate)
 
 	deleteRouter := r.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/products/{id:[0-9]+}", productHandler.Delete)
+	deleteRouter.HandleFunc("/burgers/{id:[0-9]+}", burgerHandler.Delete)
 
 	server := &http.Server{
 		Addr:         ":9090",

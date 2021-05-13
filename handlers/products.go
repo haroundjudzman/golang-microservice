@@ -11,45 +11,45 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
-// Products is http.Handler
-type Products struct {
+// Burgers is http.Handler
+type Burgers struct {
 	l *log.Logger
 }
 
-func NewProducts(l *log.Logger) *Products {
-	return &Products{l}
+func NewBurgers(l *log.Logger) *Burgers {
+	return &Burgers{l}
 }
 
-// KeyProduct is a key used for Product object in the context.
-type KeyProduct struct {
+// KeyBurger is a key used for Burger object in the context.
+type KeyBurger struct {
 }
 
-// MiddlewareProductValidate validates the product in request and calls next handler.
-func (p *Products) MiddlewareProductValidate(next http.Handler) http.Handler {
+// MiddlewareBurgerValidate validates the burger in request and calls next handler.
+func (b *Burgers) MiddlewareBurgerValidate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		prod := &data.Product{}
+		prod := &data.Burger{}
 
 		err := data.FromJSON(prod, r.Body)
 		if err != nil {
-			p.l.Println("[ERROR] serialising product", err)
+			b.l.Println("[ERROR] serialising burger", err)
 
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		// Validate product
+		// Validate burger
 		err = prod.Validate()
 		if err != nil {
-			p.l.Println("[ERROR] validating product", err)
+			b.l.Println("[ERROR] validating burger", err)
 			http.Error(
 				w,
-				fmt.Sprintf("Unable to validate product: %s", err),
+				fmt.Sprintf("Unable to validate burger: %s", err),
 				http.StatusBadRequest,
 			)
 			return
 		}
-		// Add product to the context
-		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
+		// Add burger to the context
+		ctx := context.WithValue(r.Context(), KeyBurger{}, prod)
 		r = r.WithContext(ctx)
 
 		// Call the next handler
@@ -57,11 +57,11 @@ func (p *Products) MiddlewareProductValidate(next http.Handler) http.Handler {
 	})
 }
 
-// getProductID returns product ID from URL.
+// getBurgerID returns burger ID from URL.
 // It should never fail because router ensures
 // that path will produce valid number.
 // Panic in the extreme case it fails.
-func getProductID(r *http.Request) int {
+func getBurgerID(r *http.Request) int {
 
 	// Parse id from request param
 	vars := mux.Vars(r)

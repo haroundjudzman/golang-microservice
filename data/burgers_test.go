@@ -7,12 +7,12 @@ import (
 )
 
 func TestChecksValidation(t *testing.T) {
-	p := &data.Product{
+	b := &data.Burger{
 		Name:  "Cheeseburger",
 		Price: 3.90,
 	}
 
-	err := p.Validate()
+	err := b.Validate()
 	if err != nil {
 		t.Fatal(err)
 	}

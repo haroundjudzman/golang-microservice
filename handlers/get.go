@@ -6,44 +6,44 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
-// ListAll returns all current products in database
-func (p *Products) ListAll(w http.ResponseWriter, r *http.Request) {
-	p.l.Println("[DEBUG] List all records in database")
+// ListAll returns all current burgers in database
+func (b *Burgers) ListAll(w http.ResponseWriter, r *http.Request) {
+	b.l.Println("[DEBUG] List all records in database")
 
-	// Fetch all products
-	prodList := data.GetProducts()
+	// Fetch all burgers
+	prodList := data.GetBurgers()
 
 	// Serialise to JSON
 	err := data.ToJSON(prodList, w)
 	if err != nil {
-		p.l.Println("[ERROR] serialising product", err)
+		b.l.Println("[ERROR] serialising burger", err)
 	}
 }
 
-// ListSingle returns one product from given id param
-func (p *Products) ListSingle(w http.ResponseWriter, r *http.Request) {
+// ListSingle returns one burger from given id param
+func (b *Burgers) ListSingle(w http.ResponseWriter, r *http.Request) {
 	// Get id from URL
-	id := getProductID(r)
+	id := getBurgerID(r)
 
-	p.l.Println("[DEBUG] Get product ID", id)
+	b.l.Println("[DEBUG] Get burger ID", id)
 
-	prod, err := data.GetProductByID(id)
+	prod, err := data.GetBurgerByID(id)
 
 	switch err {
 	case nil:
 
-	case data.ErrProductNotFound:
-		p.l.Println("[ERROR] No matching product", err)
+	case data.ErrBurgerNotFound:
+		b.l.Println("[ERROR] No matching burger", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	default:
-		p.l.Println("[ERROR] No matching product", err)
+		b.l.Println("[ERROR] No matching burger", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = data.ToJSON(prod, w)
 	if err != nil {
-		p.l.Println("[ERROR] serialising product", err)
+		b.l.Println("[ERROR] serialising burger", err)
 	}
 }

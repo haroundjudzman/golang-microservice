@@ -6,12 +6,12 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
-// Create adds a product to database
-func (p *Products) Create(w http.ResponseWriter, r *http.Request) {
-	p.l.Println("[DEBUG] Creating product")
+// Create adds a burger to database
+func (b *Burgers) Create(w http.ResponseWriter, r *http.Request) {
+	b.l.Println("[DEBUG] Creating burger")
 
-	// Fetch product from context
-	product := r.Context().Value(KeyProduct{}).(*data.Product)
+	// Fetch burger from context
+	burger := r.Context().Value(KeyBurger{}).(*data.Burger)
 
-	data.AddProduct(product)
+	data.AddBurger(burger)
 }

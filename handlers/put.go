@@ -6,22 +6,22 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
-// Update updates the product with given ID
-func (p *Products) Update(w http.ResponseWriter, r *http.Request) {
+// Update updates the burger with given ID
+func (b *Burgers) Update(w http.ResponseWriter, r *http.Request) {
 
-	// Fetch product from context
-	prod := r.Context().Value(KeyProduct{}).(*data.Product)
+	// Fetch burger from context
+	prod := r.Context().Value(KeyBurger{}).(*data.Burger)
 
-	p.l.Println("[DEBUG] Updating record id", prod.ID)
+	b.l.Println("[DEBUG] Updating record id", prod.ID)
 
-	err := data.UpdateProduct(prod)
-	if err == data.ErrProductNotFound {
-		http.Error(w, "Product not found", http.StatusNotFound)
+	err := data.UpdateBurger(prod)
+	if err == data.ErrBurgerNotFound {
+		http.Error(w, "Burger not found", http.StatusNotFound)
 		return
 	}
 
 	if err != nil {
-		http.Error(w, "Product not found", http.StatusInternalServerError)
+		http.Error(w, "Burger not found", http.StatusInternalServerError)
 		return
 	}
 }

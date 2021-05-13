@@ -6,20 +6,20 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
-// Delete removes the product with given id.
-func (p *Products) Delete(w http.ResponseWriter, r *http.Request) {
-	id := getProductID(r)
+// Delete removes the burger with given id.
+func (b *Burgers) Delete(w http.ResponseWriter, r *http.Request) {
+	id := getBurgerID(r)
 
-	p.l.Println("[DEBUG] Deleting record id", id)
+	b.l.Println("[DEBUG] Deleting record id", id)
 
-	err := data.DeleteProduct(id)
-	if err == data.ErrProductNotFound {
-		http.Error(w, "Product not found", http.StatusNotFound)
+	err := data.DeleteBurger(id)
+	if err == data.ErrBurgerNotFound {
+		http.Error(w, "Burger not found", http.StatusNotFound)
 		return
 	}
 
 	if err != nil {
-		http.Error(w, "Product not found", http.StatusInternalServerError)
+		http.Error(w, "Burger not found", http.StatusInternalServerError)
 		return
 	}
 
