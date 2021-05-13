@@ -8,13 +8,13 @@ import (
 
 // ListAll returns all current burgers in database
 func (b *Burgers) ListAll(w http.ResponseWriter, r *http.Request) {
-	b.l.Println("[DEBUG] List all records in database")
+	b.l.Println("[DEBUG] List all burgers in database")
 
 	// Fetch all burgers
-	prodList := data.GetBurgers()
+	burgerList := data.GetBurgers()
 
 	// Serialise to JSON
-	err := data.ToJSON(prodList, w)
+	err := data.ToJSON(burgerList, w)
 	if err != nil {
 		b.l.Println("[ERROR] serialising burger", err)
 	}
@@ -27,7 +27,7 @@ func (b *Burgers) ListSingle(w http.ResponseWriter, r *http.Request) {
 
 	b.l.Println("[DEBUG] Get burger ID", id)
 
-	prod, err := data.GetBurgerByID(id)
+	burger, err := data.GetBurgerByID(id)
 
 	switch err {
 	case nil:
@@ -35,14 +35,16 @@ func (b *Burgers) ListSingle(w http.ResponseWriter, r *http.Request) {
 	case data.ErrBurgerNotFound:
 		b.l.Println("[ERROR] No matching burger", err)
 		w.WriteHeader(http.StatusNotFound)
+		data.ToJSON(&GenericError{Message: err.Error()}, w)
 		return
 	default:
 		b.l.Println("[ERROR] No matching burger", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		data.ToJSON(&GenericError{Message: err.Error()}, w)
 		return
 	}
 
-	err = data.ToJSON(prod, w)
+	err = data.ToJSON(burger, w)
 	if err != nil {
 		b.l.Println("[ERROR] serialising burger", err)
 	}

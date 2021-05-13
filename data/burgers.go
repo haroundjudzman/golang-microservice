@@ -3,29 +3,22 @@ package data
 import (
 	"fmt"
 	"time"
-
-	"github.com/go-playground/validator"
 )
 
 // ErrBurgerNotFound raised when burger cannot be found in database.
 var ErrBurgerNotFound = fmt.Errorf("Burger not found")
 
 // Burger defines structure for API data
-// The burgers are burgers from Bob's Burgers
+// The burgers are from Bob's Burgers
 type Burger struct {
 	ID        int     `json:"id"`
 	Name      string  `json:"name" validate:"required"`
 	Season    int     `json:"season"`
 	Episode   int     `json:"episode"`
-	Price     float32 `json:"price" validate:"gt=0"`
+	Price     float32 `json:"price" validate:"required,gt=0"`
 	CreatedOn string  `json:"-"`
 	UpdatedOn string  `json:"-"`
 	DeletedOn string  `json:"-"`
-}
-
-func (b *Burger) Validate() error {
-	validate := validator.New()
-	return validate.Struct(b)
 }
 
 // Burgers is collection of Burger

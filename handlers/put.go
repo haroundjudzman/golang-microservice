@@ -10,18 +10,17 @@ import (
 func (b *Burgers) Update(w http.ResponseWriter, r *http.Request) {
 
 	// Fetch burger from context
-	prod := r.Context().Value(KeyBurger{}).(*data.Burger)
+	burger := r.Context().Value(KeyBurger{}).(*data.Burger)
 
-	b.l.Println("[DEBUG] Updating record id", prod.ID)
+	b.l.Println("[DEBUG] Updating record id", burger.ID)
 
-	err := data.UpdateBurger(prod)
+	err := data.UpdateBurger(burger)
 	if err == data.ErrBurgerNotFound {
-		http.Error(w, "Burger not found", http.StatusNotFound)
+		b.l.Println("[ERROR] burger not found")
+		w.WriteHeader(http.StatusNotFound)
+		data.ToJSON(&GenericError{Message: err.Error()}, w)
 		return
 	}
 
-	if err != nil {
-		http.Error(w, "Burger not found", http.StatusInternalServerError)
-		return
-	}
+	w.WriteHeader(http.StatusNoContent)
 }

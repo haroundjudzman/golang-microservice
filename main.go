@@ -10,14 +10,16 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/haroundjudzman/golang-microservice/data"
 	"github.com/haroundjudzman/golang-microservice/handlers"
 )
 
 func main() {
 
-	logger := log.New(os.Stdout, "golang-microservice ", log.LstdFlags)
+	l := log.New(os.Stdout, "golang-microservice ", log.LstdFlags)
+	v := data.NewValidation()
 
-	burgerHandler := handlers.NewBurgers(logger)
+	burgerHandler := handlers.NewBurgers(l, v)
 
 	// Create a router
 	r := mux.NewRouter()
@@ -42,17 +44,19 @@ func main() {
 		Addr:         ":9090",
 		Handler:      r,
 		IdleTimeout:  120 * time.Second,
-		ReadTimeout:  1 * time.Second,
-		WriteTimeout: 1 * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		ErrorLog:     l,
 	}
 
 	// Use goroutine so ListenAndServe won't block
 	go func() {
-		logger.Println("Starting server on port 9090")
+		l.Println("Starting server on port 9090")
 
 		err := server.ListenAndServe()
 		if err != nil {
-			logger.Fatal(err)
+			l.Printf("Error starting server: %s\n", err)
+			os.Exit(1)
 		}
 	}()
 
@@ -63,7 +67,7 @@ func main() {
 
 	// Block because reading from channel won't happen until there is a message to be consumed
 	sig := <-sigChan
-	logger.Println("Received terminate signal, gracefully shutting down", sig)
+	l.Println("Received terminate signal, gracefully shutting down", sig)
 
 	// Let current operation to complete with 30 seconds grace period
 	timeoutContext, cancel := context.WithTimeout(context.Background(), 30*time.Second)

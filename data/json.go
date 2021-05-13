@@ -9,7 +9,6 @@ import (
 // The result is written into io.Writer.
 func ToJSON(i interface{}, w io.Writer) error {
 	encoder := json.NewEncoder(w)
-
 	return encoder.Encode(i)
 }
 
