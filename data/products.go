@@ -66,6 +66,22 @@ func UpdateProduct(p *Product) error {
 	return nil
 }
 
+// Delete existing product with a given ID.
+// Returns an error if product is not found.
+func DeleteProduct(id int) error {
+	i := findIndexByProductID(id)
+	if i == -1 {
+		return ErrProductNotFound
+	}
+
+	// Swap target product with last product in the list
+	// and zero the new last product before deleting
+	productList[len(productList)-1], productList[i] = nil, productList[len(productList)-1]
+	productList = productList[:len(productList)-1]
+
+	return nil
+}
+
 // findIndexByProductID finds the index of product
 // in the database. Returns -1 when no match is found.
 func findIndexByProductID(id int) int {
