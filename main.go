@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
 	"github.com/haroundjudzman/golang-microservice/data"
 	"github.com/haroundjudzman/golang-microservice/handlers"
@@ -39,6 +40,13 @@ func main() {
 
 	deleteRouter := r.Methods(http.MethodDelete).Subrouter()
 	deleteRouter.HandleFunc("/burgers/{id:[0-9]+}", burgerHandler.Delete)
+
+	// Handler for docs
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	docsHandler := middleware.Redoc(opts, nil)
+
+	getRouter.Handle("/docs", docsHandler)
+	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
 	server := &http.Server{
 		Addr:         ":9090",

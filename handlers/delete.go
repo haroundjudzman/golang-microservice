@@ -6,6 +6,14 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
+// swagger:route DELETE /product/{id} burgers deleteBurger
+// Delete a burger from database
+//
+// Responses:
+// 	204: noContentResponse
+// 	404: notFoundResponse
+// 	500: genericErrorResponse
+
 // Delete removes the burger with given id.
 func (b *Burgers) Delete(w http.ResponseWriter, r *http.Request) {
 	id := getBurgerID(r)

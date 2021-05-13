@@ -1,0 +1,153 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  Burger:
+    description: |-
+      Burger defines structure for API data
+      The burgers are from Bob's Burgers
+    properties:
+      episode:
+        description: Episode when the burger appears
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: Episode
+      id:
+        description: ID of the burger
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: ID
+      name:
+        description: Name of the burger
+        maxLength: 255
+        type: string
+        x-go-name: Name
+      price:
+        description: Price of the burger
+        format: float
+        minimum: 0.01
+        type: number
+        x-go-name: Price
+      season:
+        description: Season when the burger appears
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: Season
+    required:
+    - name
+    - price
+    type: object
+    x-go-package: github.com/haroundjudzman/golang-microservice/data
+  GenericError:
+    description: GenericError is generic error message returned by server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/haroundjudzman/golang-microservice/handlers
+  ValidationError:
+    description: ValidationError is collection of validation error messages
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+        x-go-name: Messages
+    type: object
+    x-go-package: github.com/haroundjudzman/golang-microservice/handlers
+info:
+  description: Documentation for Burgers API
+  title: Burgers API
+  version: 0.0.1
+paths:
+  /burgers:
+    get:
+      description: Returns a list of all burgers in database
+      operationId: listBurgers
+      responses:
+        "200":
+          $ref: '#/responses/burgersResponse'
+      tags:
+      - burgers
+    post:
+      description: Create a new burger and insert to database
+      operationId: createBurger
+      responses:
+        "200":
+          $ref: '#/responses/burgersResponse'
+        "400":
+          $ref: '#/responses/badRequestResponse'
+        "422":
+          $ref: '#/responses/validationErrorResponse'
+      tags:
+      - burgers
+    put:
+      description: Edit existing burger
+      operationId: editBurger
+      responses:
+        "204":
+          $ref: '#/responses/noContentResponse'
+        "400":
+          $ref: '#/responses/badRequestResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+        "422":
+          $ref: '#/responses/validationErrorResponse'
+      tags:
+      - burgers
+  /burgers/{id}:
+    get:
+      description: Returns a burger in database from given id
+      operationId: listBurger
+      responses:
+        "200":
+          $ref: '#/responses/burgersResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+        "500":
+          $ref: '#/responses/genericErrorResponse'
+      tags:
+      - burgers
+  /product/{id}:
+    delete:
+      description: Delete a burger from database
+      operationId: deleteBurger
+      responses:
+        "204":
+          $ref: '#/responses/noContentResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+        "500":
+          $ref: '#/responses/genericErrorResponse'
+      tags:
+      - burgers
+produces:
+- application/json
+responses:
+  badRequestResponse:
+    description: Bad request path
+  burgersResponse:
+    description: List of all burgers
+    schema:
+      items:
+        $ref: '#/definitions/Burger'
+      type: array
+  genericErrorResponse:
+    description: Generic error
+    schema:
+      $ref: '#/definitions/GenericError'
+  noContentResponse:
+    description: No content is returned
+  notFoundResponse:
+    description: No matching burger is found
+  validationErrorResponse:
+    description: Validation errors
+    schema:
+      $ref: '#/definitions/ValidationError'
+schemes:
+- http
+swagger: "2.0"

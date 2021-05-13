@@ -10,11 +10,36 @@ var ErrBurgerNotFound = fmt.Errorf("Burger not found")
 
 // Burger defines structure for API data
 // The burgers are from Bob's Burgers
+// swagger:model
 type Burger struct {
-	ID        int     `json:"id"`
-	Name      string  `json:"name" validate:"required"`
-	Season    int     `json:"season"`
-	Episode   int     `json:"episode"`
+	// ID of the burger
+	//
+	// required: false
+	// min: 1
+	ID int `json:"id"` // Unique identifier
+
+	// Name of the burger
+	//
+	// required: true
+	// max length: 255
+	Name string `json:"name" validate:"required"`
+
+	// Season when the burger appears
+	//
+	// required: false
+	// min: 1
+	Season int `json:"season"`
+
+	// Episode when the burger appears
+	//
+	// required: false
+	// min: 1
+	Episode int `json:"episode"`
+
+	// Price of the burger
+	//
+	// required: true
+	// min: 0.01
 	Price     float32 `json:"price" validate:"required,gt=0"`
 	CreatedOn string  `json:"-"`
 	UpdatedOn string  `json:"-"`
