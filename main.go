@@ -10,45 +10,53 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/haroundjudzman/golang-microservice/data"
 	"github.com/haroundjudzman/golang-microservice/handlers"
 )
 
 func main() {
 
-	logger := log.New(os.Stdout, "golang-microservice ", log.LstdFlags)
+	l := log.New(os.Stdout, "golang-microservice ", log.LstdFlags)
+	v := data.NewValidation()
 
-	productHandler := handlers.NewProducts(logger)
+	burgerHandler := handlers.NewBurgers(l, v)
 
 	// Create a router
 	r := mux.NewRouter()
 
 	// Divide each methods into its own subrouter
 	getRouter := r.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/", productHandler.GetProducts)
+	getRouter.HandleFunc("/burgers", burgerHandler.ListAll)
+	getRouter.HandleFunc("/burgers/{id:[0-9]+}", burgerHandler.ListSingle)
 
 	putRouter := r.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/{id:[0-9]+}", productHandler.UpdateProduct)
-	putRouter.Use(productHandler.MiddlewareProductValidation)
+	putRouter.HandleFunc("/burgers", burgerHandler.Update)
+	putRouter.Use(burgerHandler.MiddlewareBurgerValidate)
 
 	postRouter := r.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/", productHandler.AddProduct)
-	postRouter.Use(productHandler.MiddlewareProductValidation)
+	postRouter.HandleFunc("/burgers", burgerHandler.Create)
+	postRouter.Use(burgerHandler.MiddlewareBurgerValidate)
+
+	deleteRouter := r.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/burgers/{id:[0-9]+}", burgerHandler.Delete)
 
 	server := &http.Server{
 		Addr:         ":9090",
 		Handler:      r,
 		IdleTimeout:  120 * time.Second,
-		ReadTimeout:  1 * time.Second,
-		WriteTimeout: 1 * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		ErrorLog:     l,
 	}
 
 	// Use goroutine so ListenAndServe won't block
 	go func() {
-		logger.Println("Starting server on port 9090")
+		l.Println("Starting server on port 9090")
 
 		err := server.ListenAndServe()
 		if err != nil {
-			logger.Fatal(err)
+			l.Printf("Error starting server: %s\n", err)
+			os.Exit(1)
 		}
 	}()
 
@@ -59,7 +67,7 @@ func main() {
 
 	// Block because reading from channel won't happen until there is a message to be consumed
 	sig := <-sigChan
-	logger.Println("Received terminate signal, gracefully shutting down", sig)
+	l.Println("Received terminate signal, gracefully shutting down", sig)
 
 	// Let current operation to complete with 30 seconds grace period
 	timeoutContext, cancel := context.WithTimeout(context.Background(), 30*time.Second)
