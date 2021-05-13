@@ -6,6 +6,12 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
+// swagger:route GET /burgers burgers listBurgers
+// Returns a list of all burgers in database
+//
+// Responses:
+// 	200: burgersResponse
+
 // ListAll returns all current burgers in database
 func (b *Burgers) ListAll(w http.ResponseWriter, r *http.Request) {
 	b.l.Println("[DEBUG] List all burgers in database")
@@ -19,6 +25,14 @@ func (b *Burgers) ListAll(w http.ResponseWriter, r *http.Request) {
 		b.l.Println("[ERROR] serialising burger", err)
 	}
 }
+
+// swagger:route GET /burgers/{id} burgers listBurger
+// Returns a burger in database from given id
+//
+// Responses:
+// 	200: burgersResponse
+// 	404: notFoundResponse
+// 	500: genericErrorResponse
 
 // ListSingle returns one burger from given id param
 func (b *Burgers) ListSingle(w http.ResponseWriter, r *http.Request) {

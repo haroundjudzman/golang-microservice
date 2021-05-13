@@ -6,6 +6,15 @@ import (
 	"github.com/haroundjudzman/golang-microservice/data"
 )
 
+// swagger:route PUT /burgers burgers editBurger
+// Edit existing burger
+//
+// Responses:
+//  204: noContentResponse
+// 	400: badRequestResponse
+// 	404: notFoundResponse
+//	422: validationErrorResponse
+
 // Update updates the burger with given ID
 func (b *Burgers) Update(w http.ResponseWriter, r *http.Request) {
 
