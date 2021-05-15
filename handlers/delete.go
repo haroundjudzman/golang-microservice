@@ -16,6 +16,8 @@ import (
 
 // Delete removes the burger with given id.
 func (b *Burgers) Delete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
 	id := getBurgerID(r)
 
 	b.l.Println("[DEBUG] Deleting burger with id", id)

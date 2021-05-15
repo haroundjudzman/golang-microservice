@@ -15,6 +15,7 @@ import (
 // ListAll returns all current burgers in database
 func (b *Burgers) ListAll(w http.ResponseWriter, r *http.Request) {
 	b.l.Println("[DEBUG] List all burgers in database")
+	w.Header().Add("Content-Type", "application/json")
 
 	// Fetch all burgers
 	burgerList := data.GetBurgers()
@@ -36,6 +37,8 @@ func (b *Burgers) ListAll(w http.ResponseWriter, r *http.Request) {
 
 // ListSingle returns one burger from given id param
 func (b *Burgers) ListSingle(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
 	// Get id from URL
 	id := getBurgerID(r)
 

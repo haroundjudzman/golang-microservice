@@ -52,3 +52,21 @@ type genericErrorWrapper struct {
 	// in: body
 	Body GenericError
 }
+
+// swagger:parameters createBurger editBurger
+type burgerParamsWrapper struct {
+	// Burger data structure to Create or Edit.
+	// ID field is ignored by both operations
+	// in: body
+	// required: true
+	Body data.Burger
+}
+
+// swagger:parameters listBurger deleteBurger
+type burgerIDParamsWrapper struct {
+	// ID of the burger needed for operations
+	// in: path
+	// min: 1
+	// required: true
+	ID int `json:"id"`
+}
