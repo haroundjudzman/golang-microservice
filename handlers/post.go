@@ -16,6 +16,8 @@ import (
 
 // Create adds a burger to database
 func (b *Burgers) Create(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
 	// Fetch burger from context
 	burger := r.Context().Value(KeyBurger{}).(*data.Burger)
 

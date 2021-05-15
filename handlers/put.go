@@ -17,6 +17,7 @@ import (
 
 // Update updates the burger with given ID
 func (b *Burgers) Update(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
 
 	// Fetch burger from context
 	burger := r.Context().Value(KeyBurger{}).(*data.Burger)
